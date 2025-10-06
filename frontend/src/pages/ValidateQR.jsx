@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { QrCode, Link as LinkIcon } from "lucide-react";
 import toast from "react-hot-toast";
@@ -168,9 +168,13 @@ export default function ValidateQR() {
             </p>
           </div>
         </div>
-
         {/* Links */}
         <div className="text-center mt-6 space-y-2">
+          <Link to="/login" className="text- text-gray-600 hover:text-gray-800">
+            ¿Ya tienes una cuenta? Inicia sesión aquí
+          </Link>{" "}
+          <br />
+          <br />
           <a
             href="#"
             className="text-gray-600 hover:text-gray-800 text-sm mr-4"
@@ -180,9 +184,7 @@ export default function ValidateQR() {
           <a href="#" className="text-gray-600 hover:text-gray-800 text-sm">
             Términos y condiciones
           </a>
-          <p className="text-gray-500 text-sm">
-            © 2025 CUCEI MATCH | Derechos reservados
-          </p>
+          <p className="text-gray-500 text-sm">© 2025 CUCEI MATCH</p>
         </div>
       </div>
     </div>
