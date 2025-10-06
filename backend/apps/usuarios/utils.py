@@ -6,6 +6,10 @@ from bs4 import BeautifulSoup
 import hashlib
 import secrets
 from urllib.parse import urlparse
+import urllib3
+
+# Deshabilitar warnings de SSL (solo para desarrollo)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 def validar_credencial_udg(url_qr):
@@ -34,8 +38,15 @@ def validar_credencial_udg(url_qr):
         }
     
     try:
-        # Hacer request a la página
-        response = requests.get(url_qr, timeout=10)
+        # Hacer request a la página SIN verificar SSL (solo para desarrollo)
+        response = requests.get(
+            url_qr, 
+            timeout=15,
+            verify=False,  # Deshabilitar verificación SSL
+            headers={
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+        )
         response.raise_for_status()
         
         # Parsear HTML
@@ -49,9 +60,11 @@ def validar_credencial_udg(url_qr):
         def extraer_dato(label):
             elemento = soup.find(text=lambda t: t and label in t)
             if elemento:
-                td_valor = elemento.find_parent('td').find_next_sibling('td')
+                td_valor = elemento.find_parent('td')
                 if td_valor:
-                    return td_valor.text.strip()
+                    siguiente = td_valor.find_next_sibling('td')
+                    if siguiente:
+                        return siguiente.text.strip()
             return None
         
         # Extraer datos
@@ -60,11 +73,14 @@ def validar_credencial_udg(url_qr):
         datos['situacion'] = extraer_dato('Situación:')
         datos['vigencia'] = extraer_dato('Vigencia:')
         
+        # Debug: imprimir lo que se encontró
+        print(f"Datos extraídos: {datos}")
+        
         # Validar que se extrajeron los datos
         if not all([datos['nombre'], datos['sede'], datos['situacion']]):
             return {
                 'valido': False,
-                'error': 'No se pudieron extraer los datos de la credencial'
+                'error': 'No se pudieron extraer los datos de la credencial. Verifica que el URL sea correcto.'
             }
         
         # Validar que sea de CUCEI
@@ -87,12 +103,18 @@ def validar_credencial_udg(url_qr):
             'es_vigente': es_vigente
         }
         
+    except requests.Timeout:
+        return {
+            'valido': False,
+            'error': 'Tiempo de espera agotado. Intenta de nuevo.'
+        }
     except requests.RequestException as e:
         return {
             'valido': False,
-            'error': f'Error al conectar con el servidor UDG: {str(e)}'
+            'error': f'Error al conectar con el servidor UDG. Verifica tu conexión a internet.'
         }
     except Exception as e:
+        print(f"Error detallado: {str(e)}")
         return {
             'valido': False,
             'error': f'Error al procesar la credencial: {str(e)}'

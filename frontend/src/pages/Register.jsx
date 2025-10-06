@@ -382,7 +382,7 @@ export default function Register() {
                   name="carrera"
                   value={formData.carrera}
                   onChange={handleChange}
-                  placeholder="Ingeniería en Computación"
+                  placeholder="Ingeniería/Licenciatura en..."
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none"
                 />
               </div>
@@ -399,7 +399,7 @@ export default function Register() {
                   onChange={handleChange}
                   min="1"
                   max="12"
-                  placeholder="6"
+                  placeholder="Ej. 6"
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none"
                 />
               </div>
