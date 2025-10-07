@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { QrCode, Link as LinkIcon } from "lucide-react";
@@ -11,62 +11,6 @@ export default function ValidateQR() {
   const [loading, setLoading] = useState(false);
   const [manualUrl, setManualUrl] = useState("");
   const [showManualInput, setShowManualInput] = useState(false);
-
-  // Agregar estilos personalizados para centrar el scanner
-  useEffect(() => {
-    const style = document.createElement("style");
-    style.innerHTML = `
-      #qr-reader {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-      
-      #qr-reader__dashboard_section {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        width: 100%;
-      }
-      
-      #qr-reader__dashboard_section_swaplink,
-      #qr-reader__dashboard_section_csr {
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        width: 100%;
-      }
-      
-      #qr-reader__scan_region {
-        margin: 0 auto;
-      }
-      
-      #qr-reader video {
-        display: block;
-        margin: 0 auto;
-      }
-      
-      #qr-reader__camera_selection {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        margin: 10px auto;
-      }
-      
-      #qr-reader__filescan_input {
-        margin: 0 auto;
-        display: block;
-        text-align: center;
-      }
-    `;
-    document.head.appendChild(style);
-
-    return () => {
-      document.head.removeChild(style);
-    };
-  }, []);
 
   const handleValidateQR = async (qrUrl) => {
     setLoading(true);
@@ -200,7 +144,7 @@ export default function ValidateQR() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-gradient-to-r from-brand-purple to-brand-pink-dark hover:from-brand-purple-dark hover:to-brand-pink-mid text-white rounded-xl font-semibold transition disabled:opacity-50"
+                  className="w-full py-4 bg-purple-900 text-white rounded-xl font-semibold hover:bg-purple-800 transition disabled:opacity-50"
                 >
                   {loading ? "Validando..." : "Enviar"}
                 </button>
