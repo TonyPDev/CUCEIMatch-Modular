@@ -64,7 +64,7 @@ export default function ValidateQR() {
         handleValidateQR(decodedText);
       },
       (error) => {
-        // Ignorar errores de escaneo
+        console.log(error);
       }
     );
   };
@@ -107,7 +107,7 @@ export default function ValidateQR() {
                 <button
                   onClick={startQRScanner}
                   disabled={loading}
-                  className="w-full py-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-2xl font-semibold hover:from-purple-700 hover:to-pink-600 transition disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full py-3 sm:py-4 bg-gradient-to-r from-brand-purple to-brand-pink-dark text-white rounded-2xl font-semibold hover:from-brand-purple-dark hover:to-brand-pink-mid transition disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base shadow-lg"
                 >
                   <QrCode size={24} />
                   {loading ? "Validando..." : "Escanear QR"}
