@@ -1,3 +1,5 @@
+// frontend/src/pages/Login.jsx
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
@@ -22,17 +24,11 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Login
       const tokens = await authService.login(formData.email, formData.password);
-
-      // Obtener datos del usuario
       const userData = await authService.getPerfil();
-
-      // Guardar en store
       setAuth(userData, tokens);
-
       toast.success("¡Bienvenido de vuelta!");
-      navigate("/home");
+      navigate("/home"); // TODO: Cambiar a la ruta del dashboard principal
     } catch (error) {
       console.error("Error login:", error);
       toast.error(
@@ -44,63 +40,36 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-purple-50 flex">
-      {/* Left Side - Info */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-purple-600 to-pink-500 p-12 flex-col justify-between">
-        <div>
-          <div className="flex justify-center mb-8">
-            <img
-              src={logo}
-              alt="CUCEI Match Logo"
-              className="w-48 md:w-56 lg:w-64 object-contain"
-            />
-          </div>
-
-          <div className="max-w-md">
-            <h2 className="text-4xl font-bold text-white mb-6">
-              ¡Bienvenido a CUCEIMatch!
-            </h2>
-            <p className="text-pink-100 text-lg">
-              Inicia sesión para descubrir y conectar con personas de tu
-              universidad. 🎓
-            </p>
-          </div>
+    <div className="min-h-screen bg-brand-background flex flex-col md:flex-row">
+      {/* Lado Izquierdo - Bienvenida */}
+      <div className="w-full md:w-1/2 flex flex-col items-center justify-center text-center p-8 md:p-12">
+        <div className="w-4/6 mb-8">
+          <img src={logo} alt="CUCEI Match Logo" />
         </div>
-
-        <div className="text-pink-100 text-sm">
-          <a href="#" className="hover:text-white mr-4">
-            Política de privacidad
-          </a>
-          <a href="#" className="hover:text-white">
-            Términos y condiciones
-          </a>
-        </div>
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">
+          ¡Bienvenido a CUCEIMatch!
+        </h2>
+        <p className="text-gray-600 text-lg mb-8">
+          Inicia sesión para descubrir y conectar con personas de tu
+          universidad. 🚀
+        </p>
+        <Link
+          to="/"
+          className="px-8 py-3 bg-gradient-to-r from-brand-pink-mid to-brand-pink-dark text-white rounded-lg font-semibold shadow-md hover:opacity-90 transition"
+        >
+          Ir al inicio
+        </Link>
       </div>
 
-      {/* Right Side - Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
-        <div className="w-full max-w-md">
-          {/* Logo móvil */}
-          <div className="lg:hidden flex items-center gap-2 mb-8">
-            <div className="w-10 h-10 bg-pink-400 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">CM</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">CUCEI MATCH</h1>
-              <p className="text-xs text-gray-600">
-                UNIVERSITY STUDENT 💛 DATING PLATFORM
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-3xl shadow-xl p-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">
+      {/* Lado Derecho - Formulario */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-8">
+        <div className="w-full max-w-sm">
+          <div className="bg-white rounded-2xl shadow-xl p-8">
+            <h2 className="text-2xl font-bold text-brand-purple mb-6 text-center">
               Ingresa tus datos
             </h2>
-            <p className="text-gray-600 mb-8">Inicia sesión en tu cuenta</p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email */}
               <div>
                 <input
                   type="email"
@@ -109,12 +78,11 @@ export default function Login() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none transition"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-brand-purple focus:ring-1 focus:ring-brand-purple outline-none transition"
                   required
                 />
               </div>
 
-              {/* Password */}
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -123,52 +91,46 @@ export default function Login() {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none transition pr-12"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-brand-purple focus:ring-1 focus:ring-brand-purple outline-none transition pr-10"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 bg-purple-900 text-white rounded-xl font-semibold hover:bg-purple-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 bg-gradient-to-r from-brand-purple-light to-brand-purple text-white rounded-lg font-semibold shadow-md hover:opacity-90 transition disabled:opacity-50"
               >
-                {loading ? "Iniciando sesión..." : "Enviar"}
+                {loading ? "Iniciando..." : "Enviar"}
               </button>
             </form>
 
-            {/* Links */}
-            <div className="mt-6 text-center space-y-3">
+            <div className="mt-6 text-center space-y-2 text-sm">
               <Link
                 to="/validate-qr"
-                className="block text-pink-600 hover:text-pink-700 font-semibold"
+                className="text-brand-purple hover:underline font-medium"
               >
                 Regístrate ahora.
               </Link>
-
-              <button className="text-gray-600 hover:text-gray-800 text-sm">
+              <br />
+              <button className="text-gray-600 hover:underline">
                 ¿Olvidaste tu contraseña? Recupérala aquí.
               </button>
             </div>
           </div>
-
-          {/* Botón de volver */}
-          <Link
-            to="/"
-            className="block text-center mt-6 text-gray-600 hover:text-gray-800"
-          >
-            ← Volver al inicio
-          </Link>
         </div>
       </div>
+      <footer className="absolute bottom-0 w-full text-center p-4 text-xs text-gray-500">
+        Política de privacidad | Términos y condiciones | © 2025 CUCEI MATCH |
+        Derechos reservados
+      </footer>
     </div>
   );
 }

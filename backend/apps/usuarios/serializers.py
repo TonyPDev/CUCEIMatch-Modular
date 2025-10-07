@@ -94,6 +94,7 @@ class RegistroSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # Remover campos que no van en el modelo
         validated_data.pop('password_confirm')
+        validated_data.pop('token_temporal')
         token_obj = validated_data.pop('_token_obj')
         password = validated_data.pop('password')
         

@@ -1,28 +1,30 @@
+// frontend/tailwind.config.js
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      colors: {
-        primary: {
-          50: "#eff6ff",
-          100: "#dbeafe",
-          200: "#bfdbfe",
-          300: "#93c5fd",
-          400: "#60a5fa",
-          500: "#3b82f6",
-          600: "#2563eb",
-          700: "#1d4ed8",
-          800: "#1e40af",
-          900: "#1e3a8a",
-        },
-        cucei: {
-          blue: "#003d7a",
-          gold: "#ffd700",
-        },
-      },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
+        kantumruy: ["var(--font-kantumruy)", "sans-serif"],
+      },
+      colors: {
+        "brand-background": "#F0F0F0",
+        "brand-pink-light": "#FFCAD4",
+        "brand-pink-mid": "#FF8EA3",
+        "brand-pink-dark": "#FF7891",
+        "brand-pink-text": "#EC939F",
+        "brand-purple": {
+          light: "#9F6684",
+          DEFAULT: "#612B47",
+          dark: "#612B47",
+        },
+
+        "brand-chat": {
+          bg: "#F5EBF6",
+          user: "#94669F",
+          bar: "#F1D4F0",
+        },
       },
     },
   },
