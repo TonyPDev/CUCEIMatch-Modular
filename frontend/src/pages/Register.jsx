@@ -120,7 +120,7 @@ export default function Register() {
         carrera: formData.carrera,
         semestre: parseInt(formData.semestre),
       };
-
+      console.log("Datos a enviar:", registroData);
       // Registrar usuario
       const result = await authService.registro(registroData);
 
@@ -137,11 +137,38 @@ export default function Register() {
       }
     } catch (error) {
       console.error("Error registro:", error);
-      toast.error(
-        error.response?.data?.error ||
-          error.response?.data?.detail ||
-          "Error al registrarse"
-      );
+      console.error("Error response data:", error.response?.data);
+
+      // Mostrar errores específicos por campo
+      if (error.response?.data) {
+        const errors = error.response.data;
+
+        // Si hay errores de validación por campo
+        if (typeof errors === "object" && !errors.error && !errors.detail) {
+          const errorMessages = Object.entries(errors)
+            .map(([field, messages]) => {
+              const fieldName =
+                field === "username"
+                  ? "Usuario"
+                  : field === "email"
+                  ? "Email"
+                  : field === "password"
+                  ? "Contraseña"
+                  : field === "fecha_nacimiento"
+                  ? "Fecha de nacimiento"
+                  : field;
+              return `${fieldName}: ${
+                Array.isArray(messages) ? messages[0] : messages
+              }`;
+            })
+            .join("\n");
+          toast.error(errorMessages);
+        } else {
+          toast.error(errors.error || errors.detail || "Error al registrarse");
+        }
+      } else {
+        toast.error("Error al registrarse. Verifica tus datos.");
+      }
     } finally {
       setLoading(false);
     }

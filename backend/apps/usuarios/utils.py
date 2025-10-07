@@ -153,26 +153,3 @@ def generar_token_temporal():
         str: Token aleatorio
     """
     return secrets.token_urlsafe(32)
-
-
-def validar_token_temporal(token):
-    """
-    Valida un token temporal de registro
-    
-    Args:
-        token: Token a validar
-    
-    Returns:
-        TokenTemporal object o None
-    """
-    from .models import TokenTemporal
-    
-    try:
-        token_obj = TokenTemporal.objects.get(token=token, usado=False)
-        
-        if token_obj.es_valido():
-            return token_obj
-        else:
-            return None
-    except TokenTemporal.DoesNotExist:
-        return None
