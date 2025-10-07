@@ -46,9 +46,8 @@ class ValidarQRView(APIView):
                 status=status.HTTP_403_FORBIDDEN
             )
         
-        # Verificar si ya existe un usuario con este código
-        codigo_udg = datos['codigo_udg']
-        if Usuario.objects.filter(codigo_udg=codigo_udg).exists():
+        # Verificar si ya existe un usuario con esta URL de credencial
+        if Usuario.objects.filter(url_credencial=url_qr).exists():
             return Response(
                 {'error': 'Esta credencial ya está registrada'},
                 status=status.HTTP_409_CONFLICT
@@ -58,7 +57,7 @@ class ValidarQRView(APIView):
         token = generar_token_temporal()
         TokenTemporal.objects.create(
             token=token,
-            codigo_udg=codigo_udg,
+            codigo_udg=url_qr,  # Guardamos el URL completo como identificador único
             nombre_completo=datos['nombre'],
             vigencia=datos['vigencia'],
             url_credencial=url_qr

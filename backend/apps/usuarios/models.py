@@ -22,11 +22,11 @@ class Usuario(AbstractUser):
     # Datos de UDG/CUCEI
     nombre_completo = models.CharField(max_length=200)
     codigo_udg = models.CharField(
-        max_length=50,
-        unique=True,
-        help_text="Código extraído del token del QR"
+        max_length=255,
+        help_text="Identificador único de la credencial"
     )
     url_credencial = models.URLField(
+        unique=True,  # La URL de la credencial debe ser única
         help_text="URL completa del QR de la credencial"
     )
     vigencia = models.CharField(
@@ -69,7 +69,7 @@ class Usuario(AbstractUser):
     
     # Configuración del modelo
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'nombre_completo', 'codigo_udg']
+    REQUIRED_FIELDS = ['username', 'nombre_completo']
     
     class Meta:
         verbose_name = 'Usuario'
@@ -77,7 +77,7 @@ class Usuario(AbstractUser):
         ordering = ['-fecha_registro']
     
     def __str__(self):
-        return f"{self.nombre_completo} ({self.codigo_udg})"
+        return f"{self.nombre_completo} ({self.email})"
     
     @property
     def edad(self):
@@ -107,7 +107,7 @@ class TokenTemporal(models.Model):
     Se usa entre la validación del QR y el registro completo
     """
     token = models.CharField(max_length=100, unique=True)
-    codigo_udg = models.CharField(max_length=50)
+    codigo_udg = models.CharField(max_length=255)  # Ahora guarda el URL completo
     nombre_completo = models.CharField(max_length=200)
     vigencia = models.CharField(max_length=50)
     url_credencial = models.URLField()

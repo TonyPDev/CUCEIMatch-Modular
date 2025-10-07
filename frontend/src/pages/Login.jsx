@@ -28,12 +28,20 @@ export default function Login() {
       const userData = await authService.getPerfil();
       setAuth(userData, tokens);
       toast.success("¡Bienvenido de vuelta!");
-      navigate("/home"); // TODO: Cambiar a la ruta del dashboard principal
+      navigate("/home");
     } catch (error) {
       console.error("Error login:", error);
-      toast.error(
-        error.response?.data?.detail || "Email o contraseña incorrectos"
-      );
+
+      // Manejo específico de errores
+      if (error.response?.status === 401) {
+        toast.error("Email o contraseña incorrectos");
+      } else if (error.response?.data?.detail) {
+        toast.error(error.response.data.detail);
+      } else if (error.response?.data?.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Error al iniciar sesión. Intenta de nuevo.");
+      }
     } finally {
       setLoading(false);
     }

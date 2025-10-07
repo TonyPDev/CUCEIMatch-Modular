@@ -120,7 +120,7 @@ export default function Register() {
         carrera: formData.carrera,
         semestre: parseInt(formData.semestre),
       };
-
+      console.log("Datos a enviar:", registroData);
       // Registrar usuario
       const result = await authService.registro(registroData);
 
@@ -137,11 +137,38 @@ export default function Register() {
       }
     } catch (error) {
       console.error("Error registro:", error);
-      toast.error(
-        error.response?.data?.error ||
-          error.response?.data?.detail ||
-          "Error al registrarse"
-      );
+      console.error("Error response data:", error.response?.data);
+
+      // Mostrar errores específicos por campo
+      if (error.response?.data) {
+        const errors = error.response.data;
+
+        // Si hay errores de validación por campo
+        if (typeof errors === "object" && !errors.error && !errors.detail) {
+          const errorMessages = Object.entries(errors)
+            .map(([field, messages]) => {
+              const fieldName =
+                field === "username"
+                  ? "Usuario"
+                  : field === "email"
+                  ? "Email"
+                  : field === "password"
+                  ? "Contraseña"
+                  : field === "fecha_nacimiento"
+                  ? "Fecha de nacimiento"
+                  : field;
+              return `${fieldName}: ${
+                Array.isArray(messages) ? messages[0] : messages
+              }`;
+            })
+            .join("\n");
+          toast.error(errorMessages);
+        } else {
+          toast.error(errors.error || errors.detail || "Error al registrarse");
+        }
+      } else {
+        toast.error("Error al registrarse. Verifica tus datos.");
+      }
     } finally {
       setLoading(false);
     }
@@ -407,7 +434,7 @@ export default function Register() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-4 bg-purple-900 text-white rounded-xl font-semibold hover:bg-purple-800 transition"
+                className="w-full py-4 bg-gradient-to-r from-brand-purple to-brand-pink-dark text-white rounded-xl font-semibold hover:bg-brand-purple-dark hover:to-brand-purple-light transition"
               >
                 Siguiente
               </button>
@@ -483,7 +510,7 @@ export default function Register() {
                 <button
                   type="submit"
                   disabled={loading || fotos.length === 0}
-                  className="flex-1 py-4 bg-purple-900 text-white rounded-xl font-semibold hover:bg-purple-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 py-4 bg-gradient-to-r from-brand-purple to-brand-pink-dark text-white rounded-xl font-semibold hover:bg-brand-purple-dark hover:to-brand-purple-light transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Registrando..." : "Finalizar registro"}
                 </button>

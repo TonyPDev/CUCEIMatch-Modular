@@ -12,7 +12,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = Usuario
         fields = [
             'id', 'email', 'username', 'nombre_completo',
-            'codigo_udg', 'fecha_nacimiento', 'edad',
+            'fecha_nacimiento', 'edad',
             'genero', 'buscando', 'carrera', 'semestre',
             'verificado', 'activo', 'perfil_completo',
             'fecha_registro', 'ultima_actividad'
@@ -62,6 +62,10 @@ class RegistroSerializer(serializers.ModelSerializer):
             'password_confirm', 'fecha_nacimiento', 'genero',
             'buscando', 'carrera', 'semestre'
         ]
+        extra_kwargs = {
+            'carrera': {'required': False, 'allow_blank': True},
+            'semestre': {'required': False, 'allow_null': True}
+        }
     
     def validate(self, attrs):
         # Validar que las contraseñas coincidan
@@ -71,19 +75,34 @@ class RegistroSerializer(serializers.ModelSerializer):
             })
         
         # Validar token temporal
-        from .utils import validar_token_temporal
         token = attrs.get('token_temporal')
-        token_obj = validar_token_temporal(token)
-        
-        if not token_obj:
+        try:
+            token_obj = TokenTemporal.objects.get(token=token, usado=False)
+            if not token_obj.es_valido():
+                raise serializers.ValidationError({
+                    "token_temporal": "Token expirado. Por favor, valida tu credencial nuevamente."
+                })
+        except TokenTemporal.DoesNotExist:
             raise serializers.ValidationError({
-                "token_temporal": "Token inválido o expirado"
+                "token_temporal": "Token inválido o ya usado"
             })
         
-        # Verificar que el código UDG no esté ya registrado
-        if Usuario.objects.filter(codigo_udg=token_obj.codigo_udg).exists():
+        # Verificar que la credencial no esté ya registrada
+        if Usuario.objects.filter(url_credencial=token_obj.url_credencial).exists():
             raise serializers.ValidationError({
-                "codigo_udg": "Esta credencial ya está registrada"
+                "credencial": "Esta credencial ya está registrada"
+            })
+        
+        # Verificar que el email no esté ya registrado
+        if Usuario.objects.filter(email=attrs['email']).exists():
+            raise serializers.ValidationError({
+                "email": "Este email ya está registrado"
+            })
+        
+        # Verificar que el username no esté ya registrado
+        if Usuario.objects.filter(username=attrs['username']).exists():
+            raise serializers.ValidationError({
+                "username": "Este nombre de usuario ya está en uso"
             })
         
         # Guardar datos del token en el contexto
@@ -102,10 +121,12 @@ class RegistroSerializer(serializers.ModelSerializer):
         usuario = Usuario.objects.create_user(
             password=password,
             nombre_completo=token_obj.nombre_completo,
-            codigo_udg=token_obj.codigo_udg,
+            codigo_udg=token_obj.url_credencial,
             url_credencial=token_obj.url_credencial,
             vigencia=token_obj.vigencia,
             verificado=True,
+            activo=True,
+            is_active=True,
             **validated_data
         )
         

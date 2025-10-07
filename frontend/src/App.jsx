@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 import ValidateQR from "./pages/ValidateQR";
 import Register from "./pages/Register";
 // Futuros import
-// import Home from './pages/Home';
+import Home from './pages/Home';
 // import Swipe from './pages/Swipe';
 // import Matches from './pages/Matches';
 // import Chat from './pages/Chat';
@@ -55,7 +55,8 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         {/* Private routes*/}
-        {/* <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+        <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+        {/*
         <Route path="/swipe" element={<PrivateRoute><Swipe /></PrivateRoute>} />
         <Route path="/matches" element={<PrivateRoute><Matches /></PrivateRoute>} />
         <Route path="/chat/:matchId" element={<PrivateRoute><Chat /></PrivateRoute>} />
