@@ -1,22 +1,21 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { useAuthStore } from "./stores/authStore";
+import { useAuth } from "./hooks/useAuth"; // Importamos el nuevo hook
 
 // Pages
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import ValidateQR from "./pages/ValidateQR";
 import Register from "./pages/Register";
-// Futuros import
-import Home from './pages/Home';
-// import Swipe from './pages/Swipe';
-// import Matches from './pages/Matches';
-// import Chat from './pages/Chat';
-// import Profile from './pages/Profile';
+import Home from "./pages/Home";
 
-function PrivateRoute({ children }) {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  return isAuthenticated ? children : <Navigate to="/login" />;
+// Componente para rutas protegidas
+import ProtectedRoute from "./components/ProtectedRoute";
+
+// Componente para manejar redirección si ya está logueado
+function PublicRoute({ children }) {
+  const { isAuthenticated } = useAuth();
+  return isAuthenticated ? <Navigate to="/home" /> : children;
 }
 
 function App() {
@@ -26,41 +25,47 @@ function App() {
         position="top-center"
         toastOptions={{
           duration: 3000,
-          style: {
-            background: "#363636",
-            color: "#fff",
-          },
-          success: {
-            duration: 3000,
-            iconTheme: {
-              primary: "#10b981",
-              secondary: "#fff",
-            },
-          },
-          error: {
-            duration: 4000,
-            iconTheme: {
-              primary: "#ef4444",
-              secondary: "#fff",
-            },
-          },
         }}
       />
 
       <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
+        {/* Rutas Públicas */}
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <Landing />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
         <Route path="/validate-qr" element={<ValidateQR />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Private routes*/}
-        <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+        {/* Rutas Privadas */}
+        <Route
+          path="/home"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Agrega aquí otras rutas privadas que necesites */}
         {/*
-        <Route path="/swipe" element={<PrivateRoute><Swipe /></PrivateRoute>} />
-        <Route path="/matches" element={<PrivateRoute><Matches /></PrivateRoute>} />
-        <Route path="/chat/:matchId" element={<PrivateRoute><Chat /></PrivateRoute>} />
-        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} /> */}
+        <Route path="/swipe" element={<ProtectedRoute><Swipe /></ProtectedRoute>} />
+        <Route path="/matches" element={<ProtectedRoute><Matches /></ProtectedRoute>} />
+        <Route path="/chat/:matchId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} /> 
+        */}
 
         {/* Redirect */}
         <Route path="*" element={<Navigate to="/" />} />
