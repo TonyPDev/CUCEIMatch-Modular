@@ -407,7 +407,7 @@ export default function Register() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full py-4 bg-purple-900 text-white rounded-xl font-semibold hover:bg-purple-800 transition"
+                className="w-full py-4 bg-gradient-to-r from-brand-purple to-brand-pink-dark text-white rounded-xl font-semibold hover:bg-brand-purple-dark hover:to-brand-purple-light transition"
               >
                 Siguiente
               </button>
@@ -483,7 +483,7 @@ export default function Register() {
                 <button
                   type="submit"
                   disabled={loading || fotos.length === 0}
-                  className="flex-1 py-4 bg-purple-900 text-white rounded-xl font-semibold hover:bg-purple-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 py-4 bg-gradient-to-r from-brand-purple to-brand-pink-dark text-white rounded-xl font-semibold hover:bg-brand-purple-dark hover:to-brand-purple-light transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? "Registrando..." : "Finalizar registro"}
                 </button>

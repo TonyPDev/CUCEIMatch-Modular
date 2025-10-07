@@ -144,7 +144,7 @@ export default function ValidateQR() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-4 bg-purple-900 text-white rounded-xl font-semibold hover:bg-purple-800 transition disabled:opacity-50"
+                  className="w-full py-4 bg-gradient-to-r from-brand-purple to-brand-pink-dark text-white rounded-xl font-semibold hover:from-brand-purple-dark hover:to-brand-pink-mid transition disabled:opacity-50"
                 >
                   {loading ? "Validando..." : "Enviar"}
                 </button>

@@ -12,7 +12,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = Usuario
         fields = [
             'id', 'email', 'username', 'nombre_completo',
-            'codigo_udg', 'fecha_nacimiento', 'edad',
+            'fecha_nacimiento', 'edad',
             'genero', 'buscando', 'carrera', 'semestre',
             'verificado', 'activo', 'perfil_completo',
             'fecha_registro', 'ultima_actividad'
@@ -80,10 +80,22 @@ class RegistroSerializer(serializers.ModelSerializer):
                 "token_temporal": "Token inválido o expirado"
             })
         
-        # Verificar que el código UDG no esté ya registrado
-        if Usuario.objects.filter(codigo_udg=token_obj.codigo_udg).exists():
+        # Verificar que la credencial no esté ya registrada (usar url_credencial en vez de codigo_udg)
+        if Usuario.objects.filter(url_credencial=token_obj.url_credencial).exists():
             raise serializers.ValidationError({
-                "codigo_udg": "Esta credencial ya está registrada"
+                "credencial": "Esta credencial ya está registrada"
+            })
+        
+        # Verificar que el email no esté ya registrado
+        if Usuario.objects.filter(email=attrs['email']).exists():
+            raise serializers.ValidationError({
+                "email": "Este email ya está registrado"
+            })
+        
+        # Verificar que el username no esté ya registrado
+        if Usuario.objects.filter(username=attrs['username']).exists():
+            raise serializers.ValidationError({
+                "username": "Este nombre de usuario ya está en uso"
             })
         
         # Guardar datos del token en el contexto
@@ -102,7 +114,7 @@ class RegistroSerializer(serializers.ModelSerializer):
         usuario = Usuario.objects.create_user(
             password=password,
             nombre_completo=token_obj.nombre_completo,
-            codigo_udg=token_obj.codigo_udg,
+            codigo_udg=token_obj.url_credencial,  # Guardamos el URL como código único
             url_credencial=token_obj.url_credencial,
             vigencia=token_obj.vigencia,
             verificado=True,
