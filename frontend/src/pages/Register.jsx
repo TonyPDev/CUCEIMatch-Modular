@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import { authService } from "../services/auth";
 import { useAuthStore } from "../stores/authStore";
 import logo from "../assets/logo.svg";
+import Modal from "../components/Modal";
+import { PrivacyPolicy, TermsAndConditions } from "../components/LegalContent";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -24,6 +26,8 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   // Form data
   const [formData, setFormData] = useState({
@@ -430,7 +434,25 @@ export default function Register() {
                   className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none"
                 />
               </div>
-
+              <div className="text-center text-xs text-gray-500 pt-2">
+                Al continuar, aceptas nuestros{" "}
+                <button
+                  type="button"
+                  onClick={() => setShowTermsModal(true)}
+                  className="underline text-pink-600 font-medium hover:text-pink-700"
+                >
+                  Términos y Condiciones
+                </button>{" "}
+                y nuestra{" "}
+                <button
+                  type="button"
+                  onClick={() => setShowPrivacyModal(true)}
+                  className="underline text-pink-600 font-medium hover:text-pink-700"
+                >
+                  Política de Privacidad
+                </button>
+                .
+              </div>
               {/* Submit Button */}
               <button
                 type="submit"
@@ -527,6 +549,24 @@ export default function Register() {
           )}
         </div>
       </div>
+
+      {showPrivacyModal && (
+        <Modal
+          onClose={() => setShowPrivacyModal(false)}
+          title="Política de Privacidad"
+        >
+          <PrivacyPolicy />
+        </Modal>
+      )}
+
+      {showTermsModal && (
+        <Modal
+          onClose={() => setShowTermsModal(false)}
+          title="Términos y Condiciones"
+        >
+          <TermsAndConditions />
+        </Modal>
+      )}
     </div>
   );
 }
