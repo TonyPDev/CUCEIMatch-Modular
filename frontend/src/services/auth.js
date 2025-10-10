@@ -6,7 +6,6 @@ export const authService = {
     const response = await api.post("/api/usuarios/validar-qr/", { url_qr });
     return response.data;
   },
-
   // Registro completo
   registro: async (data) => {
     const response = await api.post("/api/usuarios/registro/", data);

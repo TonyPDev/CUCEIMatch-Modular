@@ -94,7 +94,6 @@ export default function Login() {
             Ir al inicio
           </Link>
         </div>
-
         <div className="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-8">
           <div className="w-full max-w-sm">
             <div className="bg-white rounded-2xl shadow-xl p-8">

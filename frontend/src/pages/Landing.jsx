@@ -40,7 +40,6 @@ export default function Landing() {
           </div>
         </div>
       </header>
-
       <div className="relative min-h-screen bg-gradient-to-br from-white via-pink-50 to-brand-pink-mid overflow-hidden">
         <div className="absolute top-20 right-10 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
         <div className="absolute bottom-20 left-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-1000"></div>
@@ -143,7 +142,6 @@ export default function Landing() {
           </div>
         </section>
       </div>
-
       {/* Intereses Section*/}
       <section className="bg-gradient-to-b from-brand-background to-white py-16 sm:py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -175,7 +173,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* Swipe Section */}
       <section className="bg-white py-16 sm:py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
@@ -219,7 +216,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* Chat Section*/}
       <section className="bg-gradient-to-b from-white to-pink-50 py-16 sm:py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-8 lg:gap-16 items-center">
@@ -242,7 +238,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* Security Section o */}
       <section className="py-16 sm:py-20 lg:py-24 bg-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -263,7 +258,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* Footer */}
       <footer className="bg-gradient-to-br from-white via-pink-50 to-brand-pink-light py-10 sm:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -300,7 +294,6 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-
       {/* Modal de Política de Privacidad */}
       {showPrivacyModal && (
         <Modal
@@ -310,7 +303,6 @@ export default function Landing() {
           <PrivacyPolicy />
         </Modal>
       )}
-
       {showTermsModal && (
         <Modal
           onClose={() => setShowTermsModal(false)}
