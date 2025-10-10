@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import ValidateQR from "./pages/ValidateQR";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import UploadPhotos from "./pages/UploadPhotos";
 
 // Componente para rutas protegidas
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -48,7 +49,6 @@ function App() {
         />
         <Route path="/validate-qr" element={<ValidateQR />} />
         <Route path="/register" element={<Register />} />
-
         {/* Rutas Privadas */}
         <Route
           path="/home"
@@ -58,15 +58,20 @@ function App() {
             </ProtectedRoute>
           }
         />
-
-        {/* Agrega aquí otras rutas privadas que necesites */}
+        <Route
+          path="/upload-photos"
+          element={
+            <ProtectedRoute>
+              <UploadPhotos />
+            </ProtectedRoute>
+          }
+        />
         {/*
         <Route path="/swipe" element={<ProtectedRoute><Swipe /></ProtectedRoute>} />
         <Route path="/matches" element={<ProtectedRoute><Matches /></ProtectedRoute>} />
         <Route path="/chat/:matchId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} /> 
         */}
-
         {/* Redirect */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
