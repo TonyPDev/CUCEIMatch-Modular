@@ -20,10 +20,18 @@ class CandidatosView(APIView):
     def get(self, request):
         usuario = request.user
         
+        print(f"🔍 Usuario solicitando candidatos: {usuario.email}")
+        
         # Usuarios que ya vio (hizo swipe)
         usuarios_vistos_ids = Swipe.objects.filter(
             usuario_origen=usuario
         ).values_list('usuario_destino_id', flat=True)
+        
+        print(f"👀 Ya vio a {len(usuarios_vistos_ids)} usuarios")
+        
+        # Obtener géneros que el usuario está buscando
+        generos_buscados = usuario.get_generos_buscados()
+        print(f"💝 Buscando géneros: {generos_buscados}")
         
         # Obtener candidatos
         candidatos = Usuario.objects.filter(
@@ -35,19 +43,24 @@ class CandidatosView(APIView):
         ).exclude(
             id__in=usuarios_vistos_ids
         ).filter(
-            genero__in=usuario.get_generos_buscados()
+            genero__in=generos_buscados
         ).annotate(
             num_fotos=Count('fotos')
         ).filter(
             num_fotos__gte=1
         )
         
-        # Filtrar por preferencias
-        if hasattr(usuario, 'perfil'):
-            perfil = usuario.perfil
+        print(f"✅ Candidatos encontrados (antes de ordenar): {candidatos.count()}")
         
         # Ordenar: usuarios activos recientemente, luego aleatorio
         candidatos = candidatos.order_by('-ultima_actividad', '?')[:20]
+        
+        print(f"📋 Candidatos finales: {candidatos.count()}")
+        
+        # Verificar que cada candidato tenga fotos
+        for c in candidatos:
+            fotos_count = c.fotos.count()
+            print(f"  - {c.nombre_completo}: {fotos_count} fotos")
         
         serializer = UsuarioPerfilSerializer(
             candidatos,
