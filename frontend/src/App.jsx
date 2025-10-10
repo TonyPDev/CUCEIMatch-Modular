@@ -10,8 +10,7 @@ import ValidateQR from "./pages/ValidateQR";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import UploadPhotos from "./pages/UploadPhotos";
-import Swipe from "./pages/Swipe";
-import Matches from "./pages/Matches";
+// Se eliminan las importaciones de Swipe y Matches
 
 // Componente para rutas protegidas
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -70,22 +69,11 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/swipe"
-          element={
-            <ProtectedRoute>
-              <Swipe />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/matches"
-          element={
-            <ProtectedRoute>
-              <Matches />
-            </ProtectedRoute>
-          }
-        />
+        {/*
+          Las rutas /swipe y /matches se eliminan porque su
+          funcionalidad ahora está integrada en /home
+        */}
+
         {/*
         <Route path="/chat/:matchId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} /> 

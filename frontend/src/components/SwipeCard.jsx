@@ -1,21 +1,56 @@
-import { Heart, X, Star, MapPin, GraduationCap, Calendar } from "lucide-react";
-import { useState } from "react";
+import { ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 
-export default function SwipeCard({ usuario, onSwipe }) {
+export default function SwipeCard({ usuario }) {
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const fotos = usuario.fotos || [];
   const fotoActual = fotos[currentPhotoIndex];
+  const intervalRef = useRef(null);
 
-  const nextPhoto = () => {
-    if (currentPhotoIndex < fotos.length - 1) {
-      setCurrentPhotoIndex(currentPhotoIndex + 1);
+  // Efecto para el cambio automático de fotos
+  useEffect(() => {
+    // Solo activar si hay más de una foto
+    if (fotos.length > 1) {
+      // Limpiar intervalo anterior al cambiar de usuario
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+
+      // Iniciar nuevo intervalo
+      intervalRef.current = setInterval(() => {
+        setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % fotos.length);
+      }, 3000); // Cambia cada 3 segundos
     }
+
+    // Limpiar el intervalo cuando el componente se desmonte
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [fotos.length, usuario]); // Se ejecuta cuando cambia el usuario
+
+  const resetInterval = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    intervalRef.current = setInterval(() => {
+      setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % fotos.length);
+    }, 3000);
   };
 
-  const prevPhoto = () => {
-    if (currentPhotoIndex > 0) {
-      setCurrentPhotoIndex(currentPhotoIndex - 1);
-    }
+  const nextPhoto = (e) => {
+    e.stopPropagation();
+    setCurrentPhotoIndex((prevIndex) => (prevIndex + 1) % fotos.length);
+    resetInterval(); // Reinicia el temporizador
+  };
+
+  const prevPhoto = (e) => {
+    e.stopPropagation();
+    setCurrentPhotoIndex(
+      (prevIndex) => (prevIndex - 1 + fotos.length) % fotos.length
+    );
+    resetInterval(); // Reinicia el temporizador
   };
 
   const calcularEdad = (fechaNacimiento) => {
@@ -33,9 +68,9 @@ export default function SwipeCard({ usuario, onSwipe }) {
   const edad = calcularEdad(usuario.fecha_nacimiento);
 
   return (
-    <div className="relative w-full h-[600px] bg-white rounded-3xl shadow-2xl overflow-hidden">
+    <div className="relative w-full h-[545px] bg-white rounded-3xl shadow-2xl overflow-hidden">
       {/* Imagen con navegación */}
-      <div className="relative w-full h-[400px] bg-gray-200">
+      <div className="relative w-full h-full bg-gray-200">
         {fotoActual ? (
           <img
             src={fotoActual.imagen_url}
@@ -62,38 +97,32 @@ export default function SwipeCard({ usuario, onSwipe }) {
           </div>
         )}
 
-        {/* Áreas de navegación de fotos */}
+        {/* Botones de navegación de fotos */}
         {fotos.length > 1 && (
           <>
-            <div
-              className="absolute left-0 top-0 bottom-0 w-1/3 cursor-pointer"
+            <button
               onClick={prevPhoto}
-            />
-            <div
-              className="absolute right-0 top-0 bottom-0 w-1/3 cursor-pointer"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/30 text-white rounded-full flex items-center justify-center hover:bg-black/50 transition-colors"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
               onClick={nextPhoto}
-            />
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black/30 text-white rounded-full flex items-center justify-center hover:bg-black/50 transition-colors"
+            >
+              <ChevronRight size={24} />
+            </button>
           </>
         )}
 
-        {/* Gradiente inferior */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/60 to-transparent" />
-      </div>
-
-      {/* Información del usuario */}
-      <div className="p-6 space-y-4">
-        {/* Nombre y edad */}
-        <div>
-          <h2 className="text-3xl font-bold text-gray-800">
+        {/* Gradiente inferior e información */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent text-white">
+          <h2 className="text-3xl font-bold">
             {usuario.nombre_completo}
-            {edad && <span className="text-2xl text-gray-600">, {edad}</span>}
+            {edad && <span className="font-light">, {edad}</span>}
           </h2>
-        </div>
-
-        {/* Detalles */}
-        <div className="space-y-2">
           {usuario.carrera && (
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 mt-1">
               <GraduationCap size={20} />
               <span>
                 {usuario.carrera}
@@ -101,48 +130,10 @@ export default function SwipeCard({ usuario, onSwipe }) {
               </span>
             </div>
           )}
-
           {usuario.perfil?.bio && (
-            <p className="text-gray-700 mt-4">{usuario.perfil.bio}</p>
-          )}
-
-          {usuario.perfil?.intereses && usuario.perfil.intereses.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4">
-              {usuario.perfil.intereses.map((interes, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm"
-                >
-                  {interes}
-                </span>
-              ))}
-            </div>
+            <p className="mt-2 text-gray-200">{usuario.perfil.bio}</p>
           )}
         </div>
-      </div>
-
-      {/* Botones de acción */}
-      <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-4 px-6">
-        <button
-          onClick={() => onSwipe("dislike")}
-          className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
-        >
-          <X size={32} className="text-red-500" />
-        </button>
-
-        <button
-          onClick={() => onSwipe("superlike")}
-          className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
-        >
-          <Star size={32} className="text-blue-500" />
-        </button>
-
-        <button
-          onClick={() => onSwipe("like")}
-          className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform"
-        >
-          <Heart size={32} className="text-pink-500" />
-        </button>
       </div>
     </div>
   );
