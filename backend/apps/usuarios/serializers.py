@@ -1,14 +1,15 @@
+# backend/apps/usuarios/serializers.py
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import Usuario, TokenTemporal
-from apps.perfiles.serializers import FotoSerializer # ¡Importante! Añade esta línea
+from apps.perfiles.serializers import FotoSerializer
 
 class UsuarioSerializer(serializers.ModelSerializer):
     """
     Serializer básico de usuario
     """
     edad = serializers.ReadOnlyField()
-    fotos = serializers.SerializerMethodField() # Añade este campo
+    fotos = serializers.SerializerMethodField()
 
     class Meta:
         model = Usuario
@@ -18,11 +19,10 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'genero', 'buscando', 'carrera', 'semestre',
             'verificado', 'activo', 'perfil_completo',
             'fecha_registro', 'ultima_actividad',
-            'fotos' # Asegúrate de que 'fotos' esté en la lista
+            'fotos'
         ]
         read_only_fields = ['id', 'verificado', 'fecha_registro', 'ultima_actividad']
 
-    # Añade este método para obtener las fotos
     def get_fotos(self, obj):
         fotos = obj.fotos.all().order_by('orden')
         request = self.context.get('request')
@@ -35,18 +35,29 @@ class UsuarioPerfilSerializer(serializers.ModelSerializer):
     """
     edad = serializers.ReadOnlyField()
     fotos = serializers.SerializerMethodField()
+    perfil = serializers.SerializerMethodField()
     
     class Meta:
         model = Usuario
         fields = [
             'id', 'nombre_completo', 'edad', 'carrera',
-            'semestre', 'genero', 'fotos'
+            'semestre', 'genero', 'fotos', 'perfil',
+            'fecha_nacimiento'
         ]
     
     def get_fotos(self, obj):
         from apps.perfiles.serializers import FotoSerializer
         fotos = obj.fotos.all().order_by('orden')
         return FotoSerializer(fotos, many=True, context=self.context).data
+    
+    def get_perfil(self, obj):
+        """Incluir datos del perfil si existen"""
+        if hasattr(obj, 'perfil'):
+            return {
+                'bio': obj.perfil.bio,
+                'intereses': obj.perfil.intereses,
+            }
+        return None
     
 class RegistroSerializer(serializers.ModelSerializer):
     """

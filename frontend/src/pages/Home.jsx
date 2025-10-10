@@ -189,19 +189,23 @@ export default function Home() {
             )}
 
             {activeTab === "matches" && (
-              <div className="bg-white rounded-2xl shadow-lg p-8">
-                <h3 className="text-2xl font-bold text-gray-800 mb-6">
+              <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
+                <MessageCircle
+                  size={64}
+                  className="mx-auto text-pink-400 mb-4"
+                />
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">
                   Tus Matches
                 </h3>
-                <div className="text-center py-12">
-                  <MessageCircle
-                    size={64}
-                    className="mx-auto text-gray-300 mb-4"
-                  />
-                  <p className="text-gray-500">
-                    Aún no tienes matches. ¡Empieza a deslizar!
-                  </p>
-                </div>
+                <p className="text-gray-600 mb-6">
+                  Ve tus conexiones y empieza a chatear
+                </p>
+                <button
+                  onClick={() => navigate("/matches")}
+                  className="px-8 py-3 bg-gradient-to-r from-brand-purple to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg transition"
+                >
+                  Ver mis matches
+                </button>
               </div>
             )}
           </div>

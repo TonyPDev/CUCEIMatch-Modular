@@ -1,6 +1,7 @@
+// frontend/src/App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { useAuth } from "./hooks/useAuth"; // Importamos el nuevo hook
+import { useAuth } from "./hooks/useAuth";
 
 // Pages
 import Landing from "./pages/Landing";
@@ -9,6 +10,8 @@ import ValidateQR from "./pages/ValidateQR";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import UploadPhotos from "./pages/UploadPhotos";
+import Swipe from "./pages/Swipe";
+import Matches from "./pages/Matches";
 
 // Componente para rutas protegidas
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -49,6 +52,7 @@ function App() {
         />
         <Route path="/validate-qr" element={<ValidateQR />} />
         <Route path="/register" element={<Register />} />
+
         {/* Rutas Privadas */}
         <Route
           path="/home"
@@ -66,12 +70,27 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/swipe"
+          element={
+            <ProtectedRoute>
+              <Swipe />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/matches"
+          element={
+            <ProtectedRoute>
+              <Matches />
+            </ProtectedRoute>
+          }
+        />
         {/*
-        <Route path="/swipe" element={<ProtectedRoute><Swipe /></ProtectedRoute>} />
-        <Route path="/matches" element={<ProtectedRoute><Matches /></ProtectedRoute>} />
         <Route path="/chat/:matchId" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} /> 
         */}
+
         {/* Redirect */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
