@@ -1,13 +1,15 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import Usuario, TokenTemporal
+from apps.perfiles.serializers import FotoSerializer # ¡Importante! Añade esta línea
 
 class UsuarioSerializer(serializers.ModelSerializer):
     """
     Serializer básico de usuario
     """
     edad = serializers.ReadOnlyField()
-    
+    fotos = serializers.SerializerMethodField() # Añade este campo
+
     class Meta:
         model = Usuario
         fields = [
@@ -15,9 +17,17 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'fecha_nacimiento', 'edad',
             'genero', 'buscando', 'carrera', 'semestre',
             'verificado', 'activo', 'perfil_completo',
-            'fecha_registro', 'ultima_actividad'
+            'fecha_registro', 'ultima_actividad',
+            'fotos' # Asegúrate de que 'fotos' esté en la lista
         ]
         read_only_fields = ['id', 'verificado', 'fecha_registro', 'ultima_actividad']
+
+    # Añade este método para obtener las fotos
+    def get_fotos(self, obj):
+        fotos = obj.fotos.all().order_by('orden')
+        request = self.context.get('request')
+        return FotoSerializer(fotos, many=True, context={'request': request}).data
+
 
 class UsuarioPerfilSerializer(serializers.ModelSerializer):
     """
