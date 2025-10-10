@@ -75,13 +75,20 @@ class RegistroSerializer(serializers.ModelSerializer):
         style={'input_type': 'password'}
     )
     token_temporal = serializers.CharField(write_only=True, required=True)
+    bio = serializers.CharField(
+        write_only=True, 
+        required=False, 
+        allow_blank=True, 
+        max_length=500
+    )
     
     class Meta:
         model = Usuario
         fields = [
             'token_temporal', 'email', 'username', 'password',
             'password_confirm', 'fecha_nacimiento', 'genero',
-            'buscando', 'carrera', 'semestre'
+            'buscando', 'carrera', 'semestre',
+            'bio'  # <-- Asegúrate de que 'bio' ESTÉ en esta lista
         ]
         extra_kwargs = {
             'carrera': {'required': False, 'allow_blank': True},
@@ -89,13 +96,12 @@ class RegistroSerializer(serializers.ModelSerializer):
         }
     
     def validate(self, attrs):
-        # Validar que las contraseñas coincidan
+        # ... (este método no necesita cambios)
         if attrs['password'] != attrs['password_confirm']:
             raise serializers.ValidationError({
                 "password": "Las contraseñas no coinciden"
             })
         
-        # Validar token temporal
         token = attrs.get('token_temporal')
         try:
             token_obj = TokenTemporal.objects.get(token=token, usado=False)
@@ -108,37 +114,37 @@ class RegistroSerializer(serializers.ModelSerializer):
                 "token_temporal": "Token inválido o ya usado"
             })
         
-        # Verificar que la credencial no esté ya registrada
         if Usuario.objects.filter(url_credencial=token_obj.url_credencial).exists():
             raise serializers.ValidationError({
                 "credencial": "Esta credencial ya está registrada"
             })
         
-        # Verificar que el email no esté ya registrado
         if Usuario.objects.filter(email=attrs['email']).exists():
             raise serializers.ValidationError({
                 "email": "Este email ya está registrado"
             })
         
-        # Verificar que el username no esté ya registrado
         if Usuario.objects.filter(username=attrs['username']).exists():
             raise serializers.ValidationError({
                 "username": "Este nombre de usuario ya está en uso"
             })
         
-        # Guardar datos del token en el contexto
         attrs['_token_obj'] = token_obj
         
         return attrs
 
     def create(self, validated_data):
-        # Remover campos que no van en el modelo
+        # Remover campos que no van directamente al modelo Usuario
         validated_data.pop('password_confirm')
         validated_data.pop('token_temporal')
         token_obj = validated_data.pop('_token_obj')
         password = validated_data.pop('password')
+        # --- CAMBIO IMPORTANTE ---
+        # Extraemos la bio de validated_data ANTES de crear el usuario
+        bio = validated_data.pop('bio', '')
+        # --- FIN DEL CAMBIO ---
         
-        # Crear usuario con datos del token
+        # Crear usuario con el resto de los datos
         usuario = Usuario.objects.create_user(
             password=password,
             nombre_completo=token_obj.nombre_completo,
@@ -148,6 +154,7 @@ class RegistroSerializer(serializers.ModelSerializer):
             verificado=True,
             activo=True,
             is_active=True,
+            perfil_completo=True,
             **validated_data
         )
         
@@ -155,9 +162,9 @@ class RegistroSerializer(serializers.ModelSerializer):
         token_obj.usado = True
         token_obj.save()
         
-        # Crear perfil asociado
+        # Crear perfil asociado con la bio
         from apps.perfiles.models import Perfil
-        Perfil.objects.create(usuario=usuario)
+        Perfil.objects.create(usuario=usuario, bio=bio)
         
         return usuario
     

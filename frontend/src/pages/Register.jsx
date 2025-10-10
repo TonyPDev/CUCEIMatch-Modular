@@ -41,6 +41,7 @@ export default function Register() {
     buscando: "",
     carrera: "",
     semestre: "",
+    bio: "",
   });
 
   const [fotos, setFotos] = useState([]);
@@ -123,6 +124,7 @@ export default function Register() {
         buscando: formData.buscando,
         carrera: formData.carrera,
         semestre: parseInt(formData.semestre),
+        bio: formData.bio,
       };
       console.log("Datos a enviar:", registroData);
       // Registrar usuario
@@ -519,7 +521,20 @@ export default function Register() {
               <p className="text-sm text-gray-500 text-center">
                 Mínimo 1 foto, máximo 6. La primera será tu foto principal.
               </p>
-
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Biografía (opcional)
+                </label>
+                <textarea
+                  name="bio"
+                  value={formData.bio}
+                  onChange={handleChange}
+                  placeholder="Cuéntanos un poco sobre ti..."
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-pink-500 focus:ring-2 focus:ring-pink-200 outline-none"
+                  rows={4}
+                  maxLength={500}
+                />
+              </div>
               {/* Buttons */}
               <div className="flex gap-4">
                 <button
